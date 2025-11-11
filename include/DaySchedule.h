@@ -1,0 +1,42 @@
+//
+// Created by 김영빈 on 10/25/25.
+//
+
+#ifndef FINAL_PROJECT_DAY_SCHEDULE_H
+#define FINAL_PROJECT_DAY_SCHEDULE_H
+
+#include <vector>
+#include "Event.h"
+#include "CollegeEvent.h"
+#include "StudentEvent.h"
+#include <map>
+
+class DaySchedule {
+    private:
+        std::string studentId;
+        std::vector<Event*> events;
+        std::map<int, std::vector<Event*>> scheduleSlots;
+        const int startHour = 7;
+        const int endHour = 23;
+
+    public:
+        DaySchedule(const std::string& id);
+        ~DaySchedule();
+
+        void addEvent(Event* e);
+        bool removeEvent(const std::string& title);
+        bool updateEventTime(const std::string& title, const MyTime& newStart, const MyTime& newEnd);
+        void clearEvents();
+
+        std::vector<int> findFreeSlots() const;
+        bool isSlotFree(int hour) const;
+
+        int getEventCount() const;
+        std::string getStudentId() const;
+        int getStartHour() const;
+        int getEndHour() const;
+
+        void displayDaySchedule() const;
+};
+
+#endif // FINAL_PROJECT_DAY_SCHEDULE_H
