@@ -10,6 +10,8 @@ add_executable(Final_Project
         src/Event.cpp
         src/MyTime.cpp
         src/StudentEvent.cpp
+        src/CollegeEvent.cpp
+        src/DaySchedule.cpp
         # 필요하면 아래에 다른 .cpp도 계속 추가
         # src/DaySchedule.cpp
         # src/WeekSchedule.cpp

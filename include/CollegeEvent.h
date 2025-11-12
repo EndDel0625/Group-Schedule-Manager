@@ -11,7 +11,8 @@ enum class CollegeCategory {
     HOLIDAY,
     PROFESSOR_DAYOFF,
     FESTIVAL,
-    VACATION
+    VACATION,
+    UNKNOWN
 };
 
 class CollegeEvent : public Event {
@@ -21,7 +22,7 @@ class CollegeEvent : public Event {
 
     public:
     CollegeEvent(const std::string &title, const MyTime &start, const MyTime &end,
-                 CollegeCategory cat = CollegeCategory::HOLIDAY, bool mandatory = true,
+                 CollegeCategory cat = CollegeCategory::UNKNOWN, bool mandatory = true,
                  const std::string &note = "");
 
     void setCategory(CollegeCategory cat);

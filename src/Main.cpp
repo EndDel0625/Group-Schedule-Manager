@@ -5,6 +5,7 @@
 #include "SystemAlgorithm.h"
 #include "StudentEvent.h"
 #include "CollegeEvent.h"
+#include "DaySchedule.h"
 #include "FileInOut.h"
 
 
@@ -41,7 +42,7 @@ void testEvent() {
 void testStudentEvent() {
     std::cout << "\n=== StudentEvent Class Test ===" << std::endl;
     MyTime start(9, 30), end(12, 15);
-    StudentEvent study("30088851", "CIS 25 LEC/LAB", start, end, 1, true, "");
+    StudentEvent study("30088851", "CIS 25 LEC/LAB", start, end, 1, true, "Room 323");
 
     study.display();
 
@@ -50,12 +51,98 @@ void testStudentEvent() {
     std::cout << "After updates:" << std::endl;
     study.display();
 }
+void testCollegeEvent() {
+    std::cout << "\n=== [CollegeEvent Class Test] ===" << std::endl;
+
+    MyTime start(11, 30);
+    MyTime end(13, 0);
+
+    CollegeEvent festival("Spring Festival", start, end,
+                          CollegeCategory::FESTIVAL, false, "Main Quad");
+
+    std::cout << "\n-- Initial Event --" << std::endl;
+    festival.display();
+
+    festival.setCategory(CollegeCategory::HOLIDAY);
+    festival.setMandatory(true);
+    festival.updateNote("Rescheduled to Friday");
+
+    std::cout << "\n-- After Updates --" << std::endl;
+    festival.display();
+}
+
+
+void testDaySchedule() {
+    std::cout << "\n=== DaySchedule Class Test ===" << std::endl;
+
+    MyTime s1(9, 0);    // CIS 25 start
+    MyTime e1(12, 15);  // CIS 25 end
+    MyTime s2(13, 30);  // CHEM 30A start
+    MyTime e2(16, 0);   // CHEM 30A end
+    MyTime s3(11, 30);  // Festival start
+    MyTime e3(13, 0);   // Festival end
+
+    std::string id = "30088851";
+
+    StudentEvent* cis25 = new StudentEvent(id, "CIS 25 LEC/LAB", s1, e1, 1, false, "Room 323");
+    StudentEvent* chem30A = new StudentEvent(id, "CHEM 30A LAB", s2, e2, 2, true, "Room 521");
+    CollegeEvent* springFestival = new CollegeEvent("Spring Festival", s3, e3,
+        CollegeCategory::FESTIVAL, false, "Main Quad");
+
+    DaySchedule myDay(id);
+
+    myDay.addEvent(cis25);
+    myDay.addEvent(chem30A);
+    myDay.addEvent(springFestival);
+
+    std::cout << "\n=== [Day Schedule] ===" << std::endl;
+    myDay.displayDaySchedule();
+
+    std::cout << "\n=== [Overlap Check] ===" << std::endl;
+
+    if (cis25->overlapsWith(*chem30A)) {
+        std::cout << "CIS 25 vs CHEM 30A -> Overlap Detected" << std::endl;
+    } else {
+        std::cout << "CIS 25 vs CHEM 30A -> No Overlap" << std::endl;
+    }
+    if (cis25->overlapsWith(*springFestival)) {
+        std::cout << "CIS 25 vs Festival -> Overlap Detected" << std::endl;
+    } else {
+        std::cout << "CIS 25 vs Festival -> No Overlap" << std::endl;
+    }
+    if (chem30A->overlapsWith(*springFestival)) {
+        std::cout << "CHEM 30A vs Festival -> Overlap Detected" << std::endl;
+    } else {
+        std::cout << "CHEM 30A vs Festival -> No Overlap" << std::endl;
+    }
+
+    std::cout << "\n=== [Free Time Slots] ===" << std::endl;
+    std::vector<int> freeSlots = myDay.findFreeSlots();
+    for (int h : freeSlots) {
+        std::cout << h << ":00 ~ " << h + 1 << ":00 is free" << std::endl;
+    }
+
+    std::cout << "\n=== [Remove Event: CHEM 30A LAB] ===" << std::endl;
+    if (myDay.removeEvent("CHEM 30A LAB")) {
+        std::cout << "Event 'CHEM 30A LAB' removed successfully." << std::endl;
+    } else {
+        std::cout << "Event not found." << std::endl;
+    }
+    myDay.displayDaySchedule();
+
+    std::cout << "\n=== [After clearEvents()] ===" << std::endl;
+    myDay.clearEvents();
+    myDay.displayDaySchedule();
+}
+
 
 int main() {
 
     testTime();
     testEvent();
     testStudentEvent();
+    testCollegeEvent();
+    testDaySchedule();
 
     return 0;
 
