@@ -35,6 +35,20 @@ void DaySchedule::clearEvents() {
     events.clear();
 }
 
+std::vector<Event*> DaySchedule::getEvents() const {
+    return events;
+}
+
+void DaySchedule::removeEvent(Event* e) {
+    for (auto it = events.begin(); it != events.end(); ++it) {
+        if (*it == e) {
+            delete *it;
+            events.erase(it);
+            break;
+        }
+    }
+}
+
 std::vector<int> DaySchedule::findFreeSlots() const {
     std::vector<int> freeHour;
     for (int h = startHour; h < endHour; ++h) {

@@ -12,9 +12,11 @@ class SystemAlgorithm {
     private:
         std::vector<WeekSchedule*> allSchedules;
 
+    void distributeMultiDayEvents(WeekSchedule* schedule);
+    void resolveConflicts(WeekSchedule* schedule);
+
     public:
         SystemAlgorithm() = default;
-        ~SystemAlgorithm() = default;
 
         void addStudentSchedule(WeekSchedule* schedule);
         void findCommonFreeSlots() const;

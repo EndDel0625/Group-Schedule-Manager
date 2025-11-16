@@ -12,6 +12,10 @@ add_executable(Final_Project
         src/StudentEvent.cpp
         src/CollegeEvent.cpp
         src/DaySchedule.cpp
+        src/WeekSchedule.cpp
+        include/DayConverter.h
+        src/DayConverter.cpp
+        src/SystemAlgorithm.cpp
         # 필요하면 아래에 다른 .cpp도 계속 추가
         # src/DaySchedule.cpp
         # src/WeekSchedule.cpp

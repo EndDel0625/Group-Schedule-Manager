@@ -7,7 +7,6 @@
 
 
 #include "DaySchedule.h"
-#include <array>
 #include <map>
 #include <string>
 
@@ -36,6 +35,8 @@ class WeekSchedule {
     public:
         WeekSchedule(const std::string& id);
         ~WeekSchedule();
+
+        void setMondayDate(const SimpleDate& date);
 
         DaySchedule* getDay(DayOfWeek day);
         SimpleDate getMondayDate() const;
