@@ -25,7 +25,9 @@ class DaySchedule {
         void addEvent(Event* e);
         bool removeEvent(const std::string& title);
         void clearEvents();
-        std::vector<Event*> getEvents() const;
+        std::vector<Event*>& getEvents();
+        const std::vector<Event*>& getEvents() const;
+        bool removeEventByPointer(Event* e);
 
         std::vector<int> findFreeSlots() const;
         bool isSlotFree(int hour) const;

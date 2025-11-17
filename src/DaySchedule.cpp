@@ -35,8 +35,23 @@ void DaySchedule::clearEvents() {
     events.clear();
 }
 
-std::vector<Event*> DaySchedule::getEvents() const {
+std::vector<Event*>& DaySchedule::getEvents() {
     return events;
+}
+
+const std::vector<Event*>& DaySchedule::getEvents() const {
+    return events;
+}
+
+bool DaySchedule::removeEventByPointer(Event* e) {
+    for (auto it = events.begin(); it != events.end(); ++it) {
+        if (*it == e) {
+            delete *it;
+            events.erase(it);
+            return true;
+        }
+    }
+    return false;
 }
 
 

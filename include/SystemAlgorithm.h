@@ -8,19 +8,20 @@
 #include "WeekSchedule.h"
 #include "CollegeEvent.h"
 #include "StudentEvent.h"
+#include <vector>
 
 class SystemAlgorithm {
     private:
         std::vector<WeekSchedule*> allSchedules;
 
-    void distributeMultiDayEvents(WeekSchedule* schedule);
-    void resolveConflicts(WeekSchedule* schedule);
+        void distributeMultiDayEvents(WeekSchedule* schedule);
+        void resolveConflicts(WeekSchedule* schedule);
 
     public:
         SystemAlgorithm() = default;
 
         void addStudentSchedule(WeekSchedule* schedule);
-        void findCommonFreeSlots() const;
+        std::vector<int> findCommonFreeSlots() const;
         void displayCommonFreeSlots() const;
 };
 
