@@ -9,13 +9,12 @@
 #include "Event.h"
 #include "CollegeEvent.h"
 #include "StudentEvent.h"
-#include <map>
+#include <string>
 
 class DaySchedule {
     private:
         std::string studentId;
         std::vector<Event*> events;
-        std::map<int, std::vector<Event*>> scheduleSlots;
         const int startHour = 7;
         const int endHour = 23;
 
@@ -25,10 +24,8 @@ class DaySchedule {
 
         void addEvent(Event* e);
         bool removeEvent(const std::string& title);
-        bool updateEventTime(const std::string& title, const MyTime& newStart, const MyTime& newEnd);
         void clearEvents();
         std::vector<Event*> getEvents() const;
-        void removeEvent(Event* e);
 
         std::vector<int> findFreeSlots() const;
         bool isSlotFree(int hour) const;

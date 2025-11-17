@@ -7,8 +7,13 @@
 
 StudentEvent::StudentEvent(std::string id, const std::string &title, const MyTime &start,
                             const MyTime &end, int p, bool priv, const std::string &note)
-    : Event(title, start, end), id(id), priority(p), isPrivate(priv) {
-    this->updateNote(note);
+    : Event(title, start, end, note), id(id), priority(p), isPrivate(priv) {
+    if (priority < 1) {
+        priority = 1;
+    }
+    if (priority > 5) {
+        priority = 5;
+    }
 }
 
 std::string StudentEvent::getId() const {
@@ -22,6 +27,8 @@ bool StudentEvent::getIsPrivate() const {
 }
 
 void StudentEvent::setPriority(int p) {
+    if (p < 1) p = 1;
+    if (p > 5) p = 5;
     priority = p;
 }
 void StudentEvent::setIsPrivate(bool priv) {
@@ -30,12 +37,15 @@ void StudentEvent::setIsPrivate(bool priv) {
 
 void StudentEvent::display() const {
     std::cout << "[StudentEvent] ID: " << id
-              << " | Title: " << getTitle()
-              << " | Priority: " << priority
-              << " | Private: " << (isPrivate ? "Yes" : "No") << " | ";
-    getStartTime().display();
+              << " | Title: " << title
+              << " | Priority: " << priority   // ⭐ 1~5로 표시
+              << " | Private: " << (isPrivate ? "Yes" : "No");
+
+    if (!note.empty()) std::cout << " | Note: " << note;
+
+    std::cout << " | ";
+    startTime.display();
     std::cout << " - ";
-    getEndTime().display();
-    if (!getNote().empty()) std::cout << " | Note: " << getNote();
+    endTime.display();
     std::cout << std::endl;
 }

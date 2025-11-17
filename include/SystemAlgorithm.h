@@ -5,8 +5,9 @@
 #ifndef FINAL_PROJECT_SYSTEMALGORITHM_H
 #define FINAL_PROJECT_SYSTEMALGORITHM_H
 
-#include <vector>
 #include "WeekSchedule.h"
+#include "CollegeEvent.h"
+#include "StudentEvent.h"
 
 class SystemAlgorithm {
     private:

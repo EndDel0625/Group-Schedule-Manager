@@ -7,6 +7,7 @@
 
 #include "MyTime.h"
 #include <string>
+#include <iostream>
 
 class Event {
 protected:
@@ -16,7 +17,7 @@ protected:
     std::string note;
 
 public:
-    Event(const std::string &t, const MyTime &s, const MyTime &e);
+    Event(const std::string& t, const MyTime& s, const MyTime& e);
     virtual ~Event() = default;
 
     std::string getTitle() const;
@@ -30,6 +31,7 @@ public:
 
     int getDurationMinutes() const;
     bool overlapsWith(const Event &other) const;
+
     virtual void display() const;
 };
 

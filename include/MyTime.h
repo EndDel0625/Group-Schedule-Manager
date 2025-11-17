@@ -5,21 +5,31 @@
 #ifndef FINAL_PROJECT_MYTIME_H
 #define FINAL_PROJECT_MYTIME_H
 
+#include <iostream>
+#include "DayConverter.h"
+
 class MyTime {
 private:
-    int hour;
-    int minute;
+    int year{};
+    int month{};
+    int day{};
+    DayOfWeek dayOfWeek;
+    int hour{};
+    int minute{};
 public:
-    MyTime(int h = 0, int m = 0);
-    void setTime(int h, int m);
 
+    MyTime();
+    MyTime(int y, int m, int d, DayOfWeek dow, int h, int min);
+
+    int getYear() const;
+    int getMonth() const;
+    int getDay() const;
+    DayOfWeek getDayOfWeek() const;
     int getHour() const;
     int getMinute() const;
 
     int toMinutes() const;
-    int diffMinutes(const MyTime &other) const;
 
-    bool isAfter(const MyTime &other) const;
     void display() const;
 };
 

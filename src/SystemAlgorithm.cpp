@@ -9,40 +9,44 @@
 
 
 void SystemAlgorithm::distributeMultiDayEvents(WeekSchedule* schedule) {
+    if (schedule == nullptr) {
+        return;
+    }
 
-    for (int d = 0; d <= 6; d++) {
+    for (int d = static_cast<int>(DayOfWeek::Monday);
+         d <= static_cast<int>(DayOfWeek::Sunday); ++d) {
+
         DayOfWeek day = static_cast<DayOfWeek>(d);
-        DaySchedule* daySchedule = schedule->getDay(day);
-        std::vector<Event*> events = daySchedule->getEvents();
+        DaySchedule* daySched = schedule->getDay(day);
+        std::vector<Event*> evList = daySched->getEvents();
 
-        for (Event* e : events) {
-
+        for (Event* e : evList) {
             int startDay = static_cast<int>(e->getStartTime().getDay());
-            int endDay = static_cast<int>(e->getEndTime().getDay());
+            int endDay   = static_cast<int>(e->getEndTime().getDay());
 
-            // for one day
+            // 하루짜리라면 건너뛰기
             if (startDay == endDay) {
                 continue;
             }
 
-            // 여러 날에 걸쳐 있으면 다음 요일들에 복사
-            for (int nd = startDay + 1; nd <= endDay; nd++) {
+            // 여러 날짜에 걸쳐서 진행되는 이벤트면 다음 날들에 추가
+            for (int nd = startDay + 1; nd <= endDay; ++nd) {
                 DayOfWeek nextDay = static_cast<DayOfWeek>(nd);
-                DaySchedule* nextSchedule = schedule->getDay(nextDay);
+                DaySchedule* nextSched = schedule->getDay(nextDay);
 
-                Event* newCopy = nullptr;
-                if (dynamic_cast<StudentEvent*>(e) != nullptr) {
-                    newCopy = new StudentEvent(*(dynamic_cast<StudentEvent*>(e)));
+                Event* newEvt = nullptr;
+                if (StudentEvent* se = dynamic_cast<StudentEvent*>(e)) {
+                    newEvt = new StudentEvent(*se);
                 }
-                else if (dynamic_cast<CollegeEvent*>(e) != nullptr) {
-                    newCopy = new CollegeEvent(*(dynamic_cast<CollegeEvent*>(e)));
+                else if (CollegeEvent* ce = dynamic_cast<CollegeEvent*>(e)) {
+                    newEvt = new CollegeEvent(*ce);
                 }
                 else {
-                    newCopy = new Event(*e);
+                    newEvt = new Event(*e);
                 }
 
-                nextSchedule->addEvent(newCopy);
+                nextSched->addEvent(newEvt);
             }
         }
-    }
+         }
 }

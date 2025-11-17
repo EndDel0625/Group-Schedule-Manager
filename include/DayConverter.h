@@ -6,7 +6,16 @@
 #define FINAL_PROJECT_DAYCONVERTER_H
 
 #include <string>
-#include "WeekSchedule.h"
+
+enum class DayOfWeek {
+    Monday = 0,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+    Sunday
+};
 
 std::string dayToString(DayOfWeek day);
 

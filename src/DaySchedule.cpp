@@ -39,15 +39,6 @@ std::vector<Event*> DaySchedule::getEvents() const {
     return events;
 }
 
-void DaySchedule::removeEvent(Event* e) {
-    for (auto it = events.begin(); it != events.end(); ++it) {
-        if (*it == e) {
-            delete *it;
-            events.erase(it);
-            break;
-        }
-    }
-}
 
 std::vector<int> DaySchedule::findFreeSlots() const {
     std::vector<int> freeHour;
@@ -60,10 +51,12 @@ std::vector<int> DaySchedule::findFreeSlots() const {
 }
 
 bool DaySchedule::isSlotFree(int hour) const {
-    MyTime checkStart(hour, 0);
-    MyTime checkEnd(hour + 1, 0);
+    MyTime chkStart(0, 0, 0, DayOfWeek::Monday, hour, 0);
+    MyTime chkEnd  (0, 0, 0, DayOfWeek::Monday, hour + 1, 0);
+
     for (auto* e : events) {
-        if (!(e->getEndTime().toMinutes() <= checkStart.toMinutes() || e->getStartTime().toMinutes() >= checkEnd.toMinutes())) {
+        if (!(e->getEndTime().toMinutes() <= chkStart.toMinutes() ||
+              e->getStartTime().toMinutes() >= chkEnd.toMinutes())) {
             return false;
               }
     }
@@ -71,7 +64,7 @@ bool DaySchedule::isSlotFree(int hour) const {
 }
 
 int DaySchedule::getEventCount() const {
-    return (int)events.size();
+    return static_cast<int>(events.size());
 }
 std::string DaySchedule::getStudentId() const {
     return studentId;
@@ -84,5 +77,7 @@ int DaySchedule::getEndHour() const {
 }
 
 void DaySchedule::displayDaySchedule() const {
-    for (auto* e : events) e->display();
+    for (auto* e : events) {
+        e->display();
+    }
 }

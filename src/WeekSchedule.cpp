@@ -5,58 +5,46 @@
 
 #include "WeekSchedule.h"
 #include <iostream>
-#include "DayConverter.h"
 
 
 
-WeekSchedule::WeekSchedule(const std::string &id) : studentId(id),mondayDate{0,0,0} {
-    for (int d = (int)DayOfWeek::Monday; d <= (int)DayOfWeek::Sunday; ++d) {
-        weekDays[(DayOfWeek)d] = new DaySchedule(studentId);
-    }
+WeekSchedule::WeekSchedule(const std::string& id) : studentId(id) {
+
+    days[DayOfWeek::Monday]    = new DaySchedule(studentId);
+    days[DayOfWeek::Tuesday]   = new DaySchedule(studentId);
+    days[DayOfWeek::Wednesday] = new DaySchedule(studentId);
+    days[DayOfWeek::Thursday]  = new DaySchedule(studentId);
+    days[DayOfWeek::Friday]    = new DaySchedule(studentId);
+    days[DayOfWeek::Saturday]  = new DaySchedule(studentId);
+    days[DayOfWeek::Sunday]    = new DaySchedule(studentId);
 }
 
 WeekSchedule::~WeekSchedule() {
-    for (auto& pair : weekDays) {
+    for (auto& pair : days) {
         delete pair.second;
     }
-    weekDays.clear();
+    days.clear();
 }
 
 
 DaySchedule* WeekSchedule::getDay(DayOfWeek day) {
-    return weekDays[(DayOfWeek)day];
+    return days[day];
 }
 
-void WeekSchedule::setMondayDate(const SimpleDate& date) {
-    mondayDate = date;
-}
-
-SimpleDate WeekSchedule::getMondayDate() const {
-    return mondayDate;
-}
 
 std::string WeekSchedule::getStudentId() const {
     return studentId;
 }
 
 void WeekSchedule::displayWeekSchedule() const {
-    std::cout << "\n===== Weekly Schedule for " << studentId << " =====" << std::endl;
+    std::cout << "\n=== Weekly Schedule for " << studentId << " ===" << std::endl;
 
-    for (int d = (int)DayOfWeek::Monday; d <= (int)DayOfWeek::Sunday; ++d) {
-        DayOfWeek day = (DayOfWeek)d;
+    for (auto& entry : days) {
+        DayOfWeek day = entry.first;
+        DaySchedule* schedule = entry.second;
+
         std::cout << "\n[" << dayToString(day) << "]" << std::endl;
-        weekDays.at(day)->displayDaySchedule();
-
-        std::vector<int> free = weekDays.at(day)->findFreeSlots();
-        std::cout << "Free hours: ";
-        if (free.empty()) {
-            std::cout << "None";
-        } else {
-            for (int h : free) {
-                std::cout << h << ":00 ";
-            }
-        }
-        std::cout << std::endl;
+        schedule->displayDaySchedule();
     }
 }
 

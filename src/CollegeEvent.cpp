@@ -7,8 +7,7 @@
 
 CollegeEvent::CollegeEvent(const std::string &title, const MyTime &start,
     const MyTime &end, CollegeCategory cat, bool mandatory, const std::string &note)
-        :Event(title,start,end), category(cat), isMandatory(mandatory) {
-    this->updateNote(note);
+        :Event(title,start,end,note), category(cat), isMandatory(mandatory) {
 }
 
 void CollegeEvent::setCategory(CollegeCategory cat) {
