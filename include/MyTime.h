@@ -29,6 +29,7 @@ public:
     int getMinute() const;
 
     int toMinutes() const;
+    int diffMinutes(const MyTime& other) const;
 
     void display() const;
 };

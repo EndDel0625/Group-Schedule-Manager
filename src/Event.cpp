@@ -6,9 +6,10 @@
 #include <iostream>
 
 
-Event::Event(const std::string& t, const MyTime& s, const MyTime& e)
-    : title(t), startTime(s), endTime(e) {
+Event::Event(const std::string& t, const MyTime& s, const MyTime& e, const std::string& n)
+    : title(t), startTime(s), endTime(e), note(n) {
 }
+
 
 std::string Event::getTitle() const {
     return title;

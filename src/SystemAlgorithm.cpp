@@ -22,24 +22,31 @@ void SystemAlgorithm::distributeMultiDayEvents(WeekSchedule* schedule) {
             CollegeEvent* ce = dynamic_cast<CollegeEvent*>(ev);
             if (!ce) continue;
 
-            // If multi-day spreads across days (e.g., Mon -> Thu)
-            int start = ce->getStartTime().getDay();
-            int end   = ce->getEndTime().getDay();
+            DayOfWeek startDow = ce->getStartTime().getDayOfWeek();
+            DayOfWeek endDow   = ce->getEndTime().getDayOfWeek();
+
+            int start = static_cast<int>(startDow);
+            int end   = static_cast<int>(endDow);
             if (end <= start) continue;
 
-            // Clone into remaining days
-            for (int i = start + 1; i <= end; i++) {
-                DaySchedule* nextDay = schedule->getDay(static_cast<DayOfWeek>(i));
-                nextDay->addEvent(new CollegeEvent(*ce));
+            for (int i = start + 1; i <= end; ++i) {
+                DayOfWeek target = static_cast<DayOfWeek>(i);
+                DaySchedule* nextDay = schedule->getDay(target);
+                if (nextDay) {
+                    nextDay->addEvent(new CollegeEvent(*ce));
+                }
             }
         }
     }
 }
 
+
 void SystemAlgorithm::resolveConflicts(WeekSchedule* schedule) {
     for (int d = 0; d < 7; d++) {
         DaySchedule* day = schedule->getDay(static_cast<DayOfWeek>(d));
         auto& events = day->getEvents();
+
+        std::vector<Event*> removeList;
 
         for (int i = 0; i < (int)events.size(); i++) {
             for (int j = i + 1; j < (int)events.size(); j++) {
@@ -51,24 +58,24 @@ void SystemAlgorithm::resolveConflicts(WeekSchedule* schedule) {
                 CollegeEvent* ca = dynamic_cast<CollegeEvent*>(a);
                 CollegeEvent* cb = dynamic_cast<CollegeEvent*>(b);
 
-                // If neither is mandatory → do nothing
-                if (!(ca && ca->getIsMandatory()) && !(cb && cb->getIsMandatory()))
-                    continue;
-
-                // Mandatory resolution
-                Event* removeTarget;
-                if (ca && ca->getIsMandatory()) removeTarget = b;
-                else removeTarget = a;
-
-                std::cout << "[Conflict resolved] Mandatory event prioritized -> removed: "
-                          << removeTarget->getTitle() << "\n";
-
-                day->removeEventByPointer(removeTarget);
-                j--; // Reset index after erase
+                if (ca && ca->getIsMandatory() && !cb) {
+                    removeList.push_back(b);
+                }
+                else if (cb && cb->getIsMandatory() && !ca) {
+                    removeList.push_back(a);
+                }
+                else if (ca && cb && ca->getIsMandatory() && cb->getIsMandatory()) {
+                    removeList.push_back(b);   // delete the later-added event
+                }
             }
+        }
+
+        for (Event* e : removeList) {
+            day->removeEventByPointer(e);
         }
     }
 }
+
 
 std::vector<int> SystemAlgorithm::findCommonFreeSlots() const {
     std::vector<int> result;

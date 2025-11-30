@@ -34,6 +34,10 @@ int MyTime::toMinutes() const {
     return hour * 60 + minute;
 }
 
+int MyTime::diffMinutes(const MyTime& other) const {
+    return abs(this->toMinutes() - other.toMinutes());
+}
+
 void MyTime::display() const {
     std::cout << dayToString(dayOfWeek) << " "
               << year << "/" << month << "/" << day << " "

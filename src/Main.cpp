@@ -10,142 +10,151 @@
 
 
 void testTime() {
-    std::cout << "\n=== Time Class Test ===" << std::endl;
-    MyTime t1(9, 30);
-    MyTime t2(12, 15);
+    std::cout << "\n=== [Time Class Test] ===" << std::endl;
+    MyTime t1(2025, 11, 10, DayOfWeek::Monday, 9, 30);
+    MyTime t2(2025, 11, 10, DayOfWeek::Monday, 12, 15);
 
     std::cout << "Start: ";
     t1.display();
     std::cout << ", End: ";
     t2.display();
-    std::cout << std::endl;
-
-    std::cout << "Difference: " << t1.diffMinutes(t2) << " minutes" << std::endl;
-    std::cout << "Is t2 after t1? " << (t2.isAfter(t1) ? "Yes" : "No") << std::endl;
+    std::cout << "\nDifference: " << t1.diffMinutes(t2) << " minutes" << std::endl;
 }
 
 void testEvent() {
-    std::cout << "\n=== Event Class Test ===" << std::endl;
-    MyTime s1(9, 0), e1(12, 15);
-    MyTime s2(13, 30), e2(16, 20);
+    std::cout << "\n=== [Event Class Test] ===" << std::endl;
+    MyTime s1(2025, 11, 10, DayOfWeek::Monday, 9, 0);
+    MyTime e1(2025, 11, 10, DayOfWeek::Monday, 12, 15);
+    MyTime s2(2025, 11, 10, DayOfWeek::Monday, 13, 30);
+    MyTime e2(2025, 11, 10, DayOfWeek::Monday, 16, 20);
 
-    Event evnt1("CIS 25 LEC/LAB", s1, e1);
-    Event evnt2("CHEM 30A LAB", s2, e2);
+    Event ev1("CIS 25 LEC/LAB", s1, e1, "");
+    Event ev2("CHEM 30A LAB", s2, e2, "");
 
-    evnt1.display();
-    evnt2.display();
-
-    std::cout << "Do events overlap? "
-              << (evnt1.overlapsWith(evnt2) ? "Yes" : "No") << std::endl;
+    ev1.display();
+    ev2.display();
 }
 
 void testStudentEvent() {
-    std::cout << "\n=== StudentEvent Class Test ===" << std::endl;
-    MyTime start(9, 30), end(12, 15);
-    StudentEvent study("30088851", "CIS 25 LEC/LAB", start, end, 1, true, "Room 323");
+    std::cout << "\n=== [StudentEvent Class Test] ===" << std::endl;
+    MyTime start(2025, 11, 10, DayOfWeek::Monday, 9, 30);
+    MyTime end(2025, 11, 10, DayOfWeek::Monday, 12, 15);
 
-    study.display();
+    StudentEvent st("30088851", "CIS 25 LEC/LAB", start, end, 1, true, "Room 323");
+    st.display();
 
-    study.setPriority(2);
-    study.setIsPrivate(false);
-    std::cout << "After updates:" << std::endl;
-    study.display();
+    st.setPriority(5);
+    st.setIsPrivate(false);
+    std::cout << "\nAfter updates:\n";
+    st.display();
 }
+
 void testCollegeEvent() {
     std::cout << "\n=== [CollegeEvent Class Test] ===" << std::endl;
+    MyTime start(2025, 11, 10, DayOfWeek::Monday, 11, 30);
+    MyTime end(2025, 11, 10, DayOfWeek::Monday, 13, 0);
 
-    MyTime start(11, 30);
-    MyTime end(13, 0);
+    CollegeEvent ce("Spring Festival", start, end,
+                    CollegeCategory::FESTIVAL, false, "Main Quad");
 
-    CollegeEvent festival("Spring Festival", start, end,
-                          CollegeCategory::FESTIVAL, false, "Main Quad");
+    std::cout << "\n-- Before Updates --" << std::endl;
+    ce.display();
 
-    std::cout << "\n-- Initial Event --" << std::endl;
-    festival.display();
-
-    festival.setCategory(CollegeCategory::HOLIDAY);
-    festival.setMandatory(true);
-    festival.updateNote("Rescheduled to Friday");
+    ce.setCategory(CollegeCategory::HOLIDAY);
+    ce.setMandatory(true);
+    ce.updateNote("Rescheduled");
 
     std::cout << "\n-- After Updates --" << std::endl;
-    festival.display();
+    ce.display();
 }
-
 
 void testDaySchedule() {
-    std::cout << "\n=== DaySchedule Class Test ===" << std::endl;
+    std::cout << "\n=== [DaySchedule Class Test] ===" << std::endl;
 
-    MyTime s1(9, 0);    // CIS 25 start
-    MyTime e1(12, 15);  // CIS 25 end
-    MyTime s2(13, 30);  // CHEM 30A start
-    MyTime e2(16, 0);   // CHEM 30A end
-    MyTime s3(11, 30);  // Festival start
-    MyTime e3(13, 0);   // Festival end
+    MyTime s1(2025, 11, 10, DayOfWeek::Monday, 9, 0);
+    MyTime e1(2025, 11, 10, DayOfWeek::Monday, 12, 15);
+    MyTime s2(2025, 11, 10, DayOfWeek::Monday, 13, 30);
+    MyTime e2(2025, 11, 10, DayOfWeek::Monday, 16, 0);
+    MyTime s3(2025, 11, 10, DayOfWeek::Monday, 11, 30);
+    MyTime e3(2025, 11, 10, DayOfWeek::Monday, 13, 0);
 
-    std::string id = "30088851";
+    StudentEvent* ev1 = new StudentEvent("30088851", "CIS 25", s1, e1, 1, false, "");
+    StudentEvent* ev2 = new StudentEvent("30088851", "CHEM 30A", s2, e2, 2, true, "");
+    CollegeEvent* ev3 = new CollegeEvent("Spring Festival", s3, e3,
+        CollegeCategory::FESTIVAL, false, "");
 
-    StudentEvent* cis25 = new StudentEvent(id, "CIS 25 LEC/LAB", s1, e1, 1, false, "Room 323");
-    StudentEvent* chem30A = new StudentEvent(id, "CHEM 30A LAB", s2, e2, 2, true, "Room 521");
-    CollegeEvent* springFestival = new CollegeEvent("Spring Festival", s3, e3,
-        CollegeCategory::FESTIVAL, false, "Main Quad");
+    DaySchedule ds("30088851");
+    ds.addEvent(ev1);
+    ds.addEvent(ev2);
+    ds.addEvent(ev3);
 
-    DaySchedule myDay(id);
+    ds.displayDaySchedule();
 
-    myDay.addEvent(cis25);
-    myDay.addEvent(chem30A);
-    myDay.addEvent(springFestival);
+    std::cout << "\n-- Remove CHEM 30A --" << std::endl;
+    ds.removeEvent("CHEM 30A");
+    ds.displayDaySchedule();
 
-    std::cout << "\n=== [Day Schedule] ===" << std::endl;
-    myDay.displayDaySchedule();
+    std::cout << "\n-- Free Time --" << std::endl;
+    for (int h : ds.findFreeSlots())
+        std::cout << h << ":00 ~ " << h + 1 << ":00\n";
 
-    std::cout << "\n=== [Overlap Check] ===" << std::endl;
-
-    if (cis25->overlapsWith(*chem30A)) {
-        std::cout << "CIS 25 vs CHEM 30A -> Overlap Detected" << std::endl;
-    } else {
-        std::cout << "CIS 25 vs CHEM 30A -> No Overlap" << std::endl;
-    }
-    if (cis25->overlapsWith(*springFestival)) {
-        std::cout << "CIS 25 vs Festival -> Overlap Detected" << std::endl;
-    } else {
-        std::cout << "CIS 25 vs Festival -> No Overlap" << std::endl;
-    }
-    if (chem30A->overlapsWith(*springFestival)) {
-        std::cout << "CHEM 30A vs Festival -> Overlap Detected" << std::endl;
-    } else {
-        std::cout << "CHEM 30A vs Festival -> No Overlap" << std::endl;
-    }
-
-    std::cout << "\n=== [Free Time Slots] ===" << std::endl;
-    std::vector<int> freeSlots = myDay.findFreeSlots();
-    for (int h : freeSlots) {
-        std::cout << h << ":00 ~ " << h + 1 << ":00 is free" << std::endl;
-    }
-
-    std::cout << "\n=== [Remove Event: CHEM 30A LAB] ===" << std::endl;
-    if (myDay.removeEvent("CHEM 30A LAB")) {
-        std::cout << "Event 'CHEM 30A LAB' removed successfully." << std::endl;
-    } else {
-        std::cout << "Event not found." << std::endl;
-    }
-    myDay.displayDaySchedule();
-
-    std::cout << "\n=== [After clearEvents()] ===" << std::endl;
-    myDay.clearEvents();
-    myDay.displayDaySchedule();
+    ds.clearEvents();
 }
 
+void testSystemAlgorithmAndWeekScheduleTest() {
+    std::cout << "\n=== [SystemAlgorithm & WeekSchedule Test] ===" << std::endl;
+
+    SystemAlgorithm system;
+
+    WeekSchedule* w1 = new WeekSchedule("S1");
+    WeekSchedule* w2 = new WeekSchedule("S2");
+
+    w1->getDay(DayOfWeek::Monday)->addEvent(
+    new CollegeEvent(
+        "Spring Festival",
+        MyTime(2025, 11, 10, DayOfWeek::Monday, 10, 0),
+        MyTime(2025, 11, 10, DayOfWeek::Monday, 12, 0),
+        CollegeCategory::FESTIVAL,true,"Main Quad – Opening Ceremony")
+);
+
+    w2->getDay(DayOfWeek::Monday)->addEvent(
+        new StudentEvent("S2", "Part time Job",
+                         MyTime(2025, 11, 10, DayOfWeek::Monday, 10, 30),
+                         MyTime(2025, 11, 10, DayOfWeek::Monday, 12, 30),
+                         3, false, "")
+    );
+
+    w1->getDay(DayOfWeek::Tuesday)->addEvent(
+        new CollegeEvent("VACATION",
+                         MyTime(2025, 11, 11, DayOfWeek::Tuesday, 9, 0),
+                         MyTime(2025, 11, 13, DayOfWeek::Thursday, 18, 0),
+                         CollegeCategory::VACATION, false, "")
+    );
+
+    system.addStudentSchedule(w1);
+    system.addStudentSchedule(w2);
+
+    std::cout << "\n-- Weekly Schedules --" << std::endl;
+    w1->displayWeekSchedule();
+    w2->displayWeekSchedule();
+
+    std::cout << "\n-- Common Free Time --" <<std::endl;
+    system.displayCommonFreeSlots();
+
+    delete w1;
+    delete w2;
+}
 
 int main() {
-
     testTime();
     testEvent();
     testStudentEvent();
     testCollegeEvent();
     testDaySchedule();
+    testSystemAlgorithmAndWeekScheduleTest();
 
+    std::cout << "\n=== [All Tests Complete] ===" << std::endl;
     return 0;
-
 
 
 /*
