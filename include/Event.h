@@ -17,7 +17,7 @@ protected:
     std::string note;
 
 public:
-    Event(const std::string& t, const MyTime& s, const MyTime& e, const std::string& n);
+    Event(const std::string& t, const MyTime& s, const MyTime& e, const std::string& n = "");
     virtual ~Event() = default;
 
     std::string getTitle() const;

@@ -5,6 +5,22 @@
 #include "CollegeEvent.h"
 #include <iostream>
 
+static std::string collegeCategoryToString(CollegeCategory cat) {
+    switch (cat) {
+        case CollegeCategory::HOLIDAY:
+            return "Holiday";
+        case CollegeCategory::PROFESSOR_DAYOFF:
+            return "Professor Day Off";
+        case CollegeCategory::FESTIVAL:
+            return "Festival";
+        case CollegeCategory::VACATION:
+            return "Vacation";
+        case CollegeCategory::UNKNOWN:
+                return "Unknown";
+    }
+    return "Unknown";
+}
+
 CollegeEvent::CollegeEvent(const std::string &title, const MyTime &start,
     const MyTime &end, CollegeCategory cat, bool mandatory, const std::string &note)
         :Event(title,start,end,note), category(cat), isMandatory(mandatory) {
@@ -25,36 +41,19 @@ bool CollegeEvent::getIsMandatory() const {
 }
 
 void CollegeEvent::display() const {
-    std::cout << "[CollegeEvent] " << getTitle() << " | Category: ";
-    switch (category) {
-        case CollegeCategory::FESTIVAL:
-            std::cout << "FESTIVAL";
-            break;
-        case CollegeCategory::PROFESSOR_DAYOFF:
-            std::cout << "PROFESSOR_DAYOFF";
-            break;
-        case CollegeCategory::UNKNOWN:
-            std::cout << "UNKNOWN";
-            break;
-        case CollegeCategory::HOLIDAY:
-            std::cout << "HOLIDAY";
-            break;
-        case CollegeCategory::VACATION:
-            std::cout << "VACATION";
-            break;
+    std::cout << "[CollegeEvent] Title: " << title
+    << " | Category: " << collegeCategoryToString(category)
+    << " | Mandatory: " << (isMandatory ? "Yes" : "No");
+
+    if (!note.empty()) {
+        std::cout << " | Note: " << note;
     }
 
-    std::cout << " | Mandatory: ";
-    if (isMandatory)
-        std::cout << "Yes";
-    else
-        std::cout << "No";
-
-    if (!getNote().empty()) std::cout << " | Note: " << getNote();
-
-    std::cout <<  " | ";
-    getStartTime().display();
+    std::cout << " | ";
+    startTime.display();
     std::cout << " - ";
-    getEndTime().display();
+    endTime.display();
     std::cout << std::endl;
+
 }
+

@@ -13,17 +13,18 @@ DaySchedule::~DaySchedule() {
 }
 
 void DaySchedule::addEvent(Event* e) {
+    if (e == nullptr) {
+        return;
+    }
     events.push_back(e);
 }
 
-bool DaySchedule::removeEvent(const std::string &title) {
-    for (auto it = events.begin(); it != events.end(); ) {
+bool DaySchedule::removeEvent(const std::string& title) {
+    for (auto it = events.begin(); it != events.end(); ++it) {
         if ((*it)->getTitle() == title) {
             delete *it;
-            it = events.erase(it);
+            events.erase(it);
             return true;
-        } else {
-            ++it;
         }
     }
     return false;
@@ -31,7 +32,9 @@ bool DaySchedule::removeEvent(const std::string &title) {
 
 
 void DaySchedule::clearEvents() {
-    for (auto* e : events) delete e;
+    for (auto* e : events) {
+        delete e;
+    }
     events.clear();
 }
 
@@ -56,26 +59,29 @@ bool DaySchedule::removeEventByPointer(Event* e) {
 
 
 std::vector<int> DaySchedule::findFreeSlots() const {
-    std::vector<int> freeHour;
+    std::vector<int> freeSlots;
     for (int h = startHour; h < endHour; ++h) {
         if (isSlotFree(h)) {
-            freeHour.push_back(h);
+            freeSlots.push_back(h);
         }
     }
-    return freeHour;
+    return freeSlots;
 }
 
 bool DaySchedule::isSlotFree(int hour) const {
-    MyTime chkStart(0, 0, 0, DayOfWeek::Monday, hour, 0);
-    MyTime chkEnd  (0, 0, 0, DayOfWeek::Monday, hour + 1, 0);
+    int slotStart = hour * 60;
+    int slotEnd = (hour + 1) * 60;
 
-    for (auto* e : events) {
-        if (!(e->getEndTime().toMinutes() <= chkStart.toMinutes() ||
-              e->getStartTime().toMinutes() >= chkEnd.toMinutes())) {
+    for (Event* e : events) {
+        int eStart = e->getStartTime().toMinutes();
+        int eEnd   = e->getEndTime().toMinutes();
+
+        if (!(eEnd <= slotStart || eStart >= slotEnd)) {
             return false;
-              }
+        }
     }
     return true;
+
 }
 
 int DaySchedule::getEventCount() const {

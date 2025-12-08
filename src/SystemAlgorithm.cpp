@@ -4,9 +4,13 @@
 
 #include "SystemAlgorithm.h"
 #include <iostream>
+#include <algorithm>
 
 
 void SystemAlgorithm::addStudentSchedule(WeekSchedule* schedule) {
+    if (!schedule) {
+        return;
+    }
     distributeMultiDayEvents(schedule);
     resolveConflicts(schedule);
     allSchedules.push_back(schedule);
@@ -16,64 +20,98 @@ void SystemAlgorithm::distributeMultiDayEvents(WeekSchedule* schedule) {
     for (int d = 0; d < 7; d++) {
         DayOfWeek day = static_cast<DayOfWeek>(d);
         DaySchedule* ds = schedule->getDay(day);
+        if (!ds) {
+            continue;
+        }
         std::vector<Event*> copy = ds->getEvents();
 
         for (Event* ev : copy) {
-            CollegeEvent* ce = dynamic_cast<CollegeEvent*>(ev);
+            auto* ce = dynamic_cast<CollegeEvent*>(ev);
             if (!ce) continue;
 
             DayOfWeek startDow = ce->getStartTime().getDayOfWeek();
             DayOfWeek endDow   = ce->getEndTime().getDayOfWeek();
 
+            if (startDow != day) {
+                continue;
+            }
+
             int start = static_cast<int>(startDow);
             int end   = static_cast<int>(endDow);
-            if (end <= start) continue;
+            if (end <= start) {
+                continue;
+            }
 
             for (int i = start + 1; i <= end; ++i) {
                 DayOfWeek target = static_cast<DayOfWeek>(i);
+
                 DaySchedule* nextDay = schedule->getDay(target);
-                if (nextDay) {
-                    nextDay->addEvent(new CollegeEvent(*ce));
+                if (!nextDay) {
+                    continue;
                 }
+
+                const MyTime s = ce->getStartTime();
+                const MyTime e = ce->getEndTime();
+
+                MyTime newStart(s.getYear(), s.getMonth(), s.getDay(), target, s.getHour(), s.getMinute());
+                MyTime newEnd(e.getYear(), e.getMonth(), e.getDay(), target, e.getHour(), e.getMinute());
+
+                auto* cloned = new CollegeEvent(ce->getTitle(), newStart, newEnd,ce->getCategory(), ce->getIsMandatory(), ce->getNote());
+
+                nextDay->addEvent(cloned);
             }
         }
     }
+
 }
 
 
 void SystemAlgorithm::resolveConflicts(WeekSchedule* schedule) {
-    for (int d = 0; d < 7; d++) {
-        DaySchedule* day = schedule->getDay(static_cast<DayOfWeek>(d));
-        auto& events = day->getEvents();
+    if (!schedule) {
+        return;
+    }
 
-        std::vector<Event*> removeList;
+    const std::string sid = schedule->getStudentId();
 
-        for (int i = 0; i < (int)events.size(); i++) {
-            for (int j = i + 1; j < (int)events.size(); j++) {
-                Event* a = events[i];
-                Event* b = events[j];
+    for (int d = 0; d < 7; ++d) {
+        DayOfWeek day = static_cast<DayOfWeek>(d);
+        DaySchedule* ds = schedule->getDay(day);
+        if (!ds) {
+            continue;
+        }
 
-                if (!a->overlapsWith(*b)) continue;
+        auto& evs = ds->getEvents();
 
-                CollegeEvent* ca = dynamic_cast<CollegeEvent*>(a);
-                CollegeEvent* cb = dynamic_cast<CollegeEvent*>(b);
+        std::sort(evs.begin(), evs.end(),
+                  [](Event* a, Event* b) {
+                      return a->getStartTime().toMinutes() < b->getStartTime().toMinutes();
+                  });
 
-                if (ca && ca->getIsMandatory() && !cb) {
-                    removeList.push_back(b);
+        for (std::size_t i = 0; i < evs.size(); ++i) {
+            for (std::size_t j = i + 1; j < evs.size(); ++j) {
+                Event* e1 = evs[i];
+                Event* e2 = evs[j];
+
+                if (!e1->overlapsWith(*e2)) {
+                    continue;
                 }
-                else if (cb && cb->getIsMandatory() && !ca) {
-                    removeList.push_back(a);
+
+                auto* s1 = dynamic_cast<StudentEvent*>(e1);
+                auto* s2 = dynamic_cast<StudentEvent*>(e2);
+                auto* c1 = dynamic_cast<CollegeEvent*>(e1);
+                auto* c2 = dynamic_cast<CollegeEvent*>(e2);
+
+                std::cout << "[Conflict] Student " << sid << " on " << dayToString(day) << ": "
+                          << "'" << e1->getTitle() << "'" << " overlaps with " << "'" << e2->getTitle() << "'";
+
+                if (c1 || c2) {
+                    std::cout << " (CollegeEvent involved)";
                 }
-                else if (ca && cb && ca->getIsMandatory() && cb->getIsMandatory()) {
-                    removeList.push_back(b);   // delete the later-added event
-                }
+                std::cout << std::endl;
             }
         }
-
-        for (Event* e : removeList) {
-            day->removeEventByPointer(e);
-        }
     }
+
 }
 
 
@@ -81,28 +119,47 @@ std::vector<int> SystemAlgorithm::findCommonFreeSlots() const {
     std::vector<int> result;
     if (allSchedules.empty()) return result;
 
-    for (int h = 7; h < 23; h++) {
+    for (int h = 7; h < 23; ++h) {
         bool allFree = true;
+
         for (WeekSchedule* ws : allSchedules) {
-            for (int d = 0; d < 7; d++) {
-                if (!ws->getDay(static_cast<DayOfWeek>(d))->isSlotFree(h)) {
+            if (!ws) continue;
+
+            for (int d = 0; d < 7; ++d) {
+                DayOfWeek day = static_cast<DayOfWeek>(d);
+                DaySchedule* ds = ws->getDay(day);
+                if (!ds) {
+                    continue;
+                }
+
+                if (!ds->isSlotFree(h)) {
                     allFree = false;
                     break;
                 }
             }
-            if (!allFree) break;
+            if (!allFree) {
+                break;
+            }
         }
-        if (allFree) result.push_back(h);
+
+        if (allFree) {
+            result.push_back(h);
+        }
     }
+
     return result;
 }
 
 void SystemAlgorithm::displayCommonFreeSlots() const {
     std::vector<int> free = findCommonFreeSlots();
-    std::cout << "\n=== Common Free Time ===\n";
+
+    std::cout << "\n=== Common Free Time ===" << std::endl;
     if (free.empty()) {
-        std::cout << "No shared free time.\n";
+        std::cout << "No shared free time." << std::endl;
         return;
     }
-    for (int h : free) std::cout << h << ":00 ~ " << h + 1 << ":00\n";
+
+    for (int h : free) {
+        std::cout << h << ":00 ~ " << h + 1 << ":00" << std::endl;
+    }
 }

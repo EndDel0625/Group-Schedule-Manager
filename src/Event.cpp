@@ -30,18 +30,13 @@ void Event::updateTitle(const std::string &newTitle) {
 void Event::updateTime(const MyTime &newStart, const MyTime &newEnd) {
     startTime = newStart;
     endTime = newEnd;
-    if (endTime.toMinutes() < startTime.toMinutes()) {
-        MyTime tmp = startTime;
-        startTime = endTime;
-        endTime = tmp;
-    }
 }
 void Event::updateNote(const std::string &newNote) {
     note = newNote;
 }
 
 int Event::getDurationMinutes() const {
-    return endTime.toMinutes() - startTime.toMinutes();
+    return startTime.diffMinutes(endTime);
 }
 
 bool Event::overlapsWith(const Event& other) const {

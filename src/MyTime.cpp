@@ -2,10 +2,11 @@
 // Created by 김영빈 on 11/8/25.
 //
 #include "MyTime.h"
-#include <iostream>
+#include <cmath>
 #include <iomanip>
 
-MyTime::MyTime() = default;
+MyTime::MyTime() : year(0), month(0), day(0), dayOfWeek(DayOfWeek::Monday),hour(0), minute(0) {
+}
 
 MyTime::MyTime(int y, int m, int d, DayOfWeek dow, int h, int min)
     : year(y), month(m), day(d), dayOfWeek(dow), hour(h), minute(min) {
@@ -35,7 +36,7 @@ int MyTime::toMinutes() const {
 }
 
 int MyTime::diffMinutes(const MyTime& other) const {
-    return abs(this->toMinutes() - other.toMinutes());
+    return std::abs(this->toMinutes() - other.toMinutes());
 }
 
 void MyTime::display() const {

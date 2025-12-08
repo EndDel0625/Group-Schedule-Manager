@@ -19,6 +19,8 @@ class SystemAlgorithm {
 
     public:
         SystemAlgorithm() = default;
+        SystemAlgorithm(const SystemAlgorithm&) = delete;
+        SystemAlgorithm& operator=(const SystemAlgorithm&) = delete;
 
         void addStudentSchedule(WeekSchedule* schedule);
         std::vector<int> findCommonFreeSlots() const;

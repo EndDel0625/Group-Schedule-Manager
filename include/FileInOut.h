@@ -8,7 +8,7 @@
 #include "WeekSchedule.h"
 #include <string>
 
-void saveScheduleToFile(const WeekSchedule* week, const std::string& filename);
+void saveScheduleToFile(const WeekSchedule* week);
 WeekSchedule* loadScheduleFromFile(const std::string& filename);
 
 

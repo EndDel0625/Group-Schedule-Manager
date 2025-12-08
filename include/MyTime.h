@@ -13,7 +13,7 @@ private:
     int year{};
     int month{};
     int day{};
-    DayOfWeek dayOfWeek;
+    DayOfWeek dayOfWeek = DayOfWeek::Monday;
     int hour{};
     int minute{};
 public:

@@ -19,14 +19,19 @@ class DaySchedule {
         const int endHour = 23;
 
     public:
-        DaySchedule(const std::string& id);
+        explicit DaySchedule(const std::string& id);
         ~DaySchedule();
+
+        DaySchedule(const DaySchedule&) = delete;
+        DaySchedule& operator=(const DaySchedule&) = delete;
 
         void addEvent(Event* e);
         bool removeEvent(const std::string& title);
         void clearEvents();
+
         std::vector<Event*>& getEvents();
         const std::vector<Event*>& getEvents() const;
+
         bool removeEventByPointer(Event* e);
 
         std::vector<int> findFreeSlots() const;

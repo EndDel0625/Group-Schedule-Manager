@@ -10,13 +10,10 @@
 
 WeekSchedule::WeekSchedule(const std::string& id) : studentId(id) {
 
-    days[DayOfWeek::Monday]    = new DaySchedule(studentId);
-    days[DayOfWeek::Tuesday]   = new DaySchedule(studentId);
-    days[DayOfWeek::Wednesday] = new DaySchedule(studentId);
-    days[DayOfWeek::Thursday]  = new DaySchedule(studentId);
-    days[DayOfWeek::Friday]    = new DaySchedule(studentId);
-    days[DayOfWeek::Saturday]  = new DaySchedule(studentId);
-    days[DayOfWeek::Sunday]    = new DaySchedule(studentId);
+    for (int d = 0; d < 7; ++d) {
+        DayOfWeek day = static_cast<DayOfWeek>(d);
+        days[day] = new DaySchedule(studentId);
+    }
 }
 
 WeekSchedule::~WeekSchedule() {
@@ -37,14 +34,15 @@ std::string WeekSchedule::getStudentId() const {
 }
 
 void WeekSchedule::displayWeekSchedule() const {
-    std::cout << "\n=== Weekly Schedule for " << studentId << " ===" << std::endl;
+    std::cout << "\n==== Week Schedule for " << studentId << " ====" << std::endl;
+    for (int d = 0; d < 7; ++d) {
+        DayOfWeek day = static_cast<DayOfWeek>(d);
+        auto it = days.find(day);
+        if (it == days.end()) continue;
 
-    for (auto& entry : days) {
-        DayOfWeek day = entry.first;
-        DaySchedule* schedule = entry.second;
-
-        std::cout << "\n[" << dayToString(day) << "]" << std::endl;
-        schedule->displayDaySchedule();
+        std::cout << "[" << dayToString(day) << "]" <<std::endl;
+        const DaySchedule* ds = it->second;
+        ds->displayDaySchedule();
     }
 }
 

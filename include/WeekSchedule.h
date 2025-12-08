@@ -18,8 +18,11 @@ class WeekSchedule {
         std::map<DayOfWeek, DaySchedule*> days;
 
     public:
-        WeekSchedule(const std::string& id);
+        explicit WeekSchedule(const std::string& id);
         ~WeekSchedule();
+
+        WeekSchedule(const WeekSchedule&) = delete;
+        WeekSchedule& operator=(const WeekSchedule&) = delete;
 
         DaySchedule* getDay(DayOfWeek day);
         std::string getStudentId() const;
